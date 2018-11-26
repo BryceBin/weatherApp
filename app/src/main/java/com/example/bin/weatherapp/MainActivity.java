@@ -13,12 +13,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        FragmentManager fm = getSupportFragmentManager();
-        Fragment fragment = fm.findFragmentById(R.id.menu_fragment);
-        if(fragment == null){
-            fragment = new fragmentDemo();
-            fm.beginTransaction()
-                    .add(R.id.menu_fragment,fragment)
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        if (fragment == null){
+            fragment = new weatherListFragment();
+            fragmentManager.beginTransaction()
+                    .add(R.id.fragment_container,fragment)
                     .commit();
         }
     }
