@@ -1,13 +1,8 @@
 package com.example.bin.weatherapp;
 
-import android.provider.DocumentsContract;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-
-import java.net.URL;
 
 
 /**
@@ -15,47 +10,53 @@ import java.net.URL;
  * @Date: 2018/11/25
  */
 public class weatherSpider {
-    public static weatherRealTime mWeatherRealTime;
+    public static weatherRealTime sWeatherRealTime;
+    public static weatherForecast sWeatherForecast;
 
     public static weatherRealTime getRealTimeWeather(String location){
         try {
-            Connection.Response response = Jsoup.connect("https://api.caiyunapp.com/v2/AtNnPO587kFSQOHr/"+location+"/realtime.json")
+            Connection.Response response = Jsoup.connect("https://free-api.heweather.com/s6/weather/now?key=f07e1d0027a24a47ad7e47dbf62a2e7c&location="+location)
                                         .ignoreContentType(true)
                                         .execute();
             //只取result下的数据
             String json = response.body();
-            int index = json.indexOf("\"result\"");
-            json = json.substring(index+9);
-            json = json.substring(0,json.length()-1);
+            //System.out.println(json);
+            int index = json.indexOf("\"now\"");
+            json = json.substring(index+6);
+            json = json.substring(0,json.length()-3);
             //System.out.println(json);
 
-            mWeatherRealTime = new Gson().fromJson(json, weatherRealTime.class);
-            System.out.println(mWeatherRealTime.getSkycon()+"\n"+
-                                mWeatherRealTime.getTemperature()+"\n"+
-                                mWeatherRealTime.getCloudrate()+"\n"+
-                                mWeatherRealTime.getWind().getSpeed()+"\n"+
-                                mWeatherRealTime.getComfort().getIndex()+"\n");
+            sWeatherRealTime = new Gson().fromJson(json, weatherRealTime.class);
+            System.out.println(sWeatherRealTime.getCloud()+"\n"+
+                    sWeatherRealTime.getFl()+"\n"+
+                    sWeatherRealTime.getHum()+"\n"+
+                    sWeatherRealTime.getTmp()+"\n"+
+                    sWeatherRealTime.getVis()+"\n");
 
         }
         catch (Exception e){
             e.printStackTrace();
         }
-        return mWeatherRealTime;
+        return sWeatherRealTime;
     }
 
-    public static void getForecastWeather(String location){
+    public static weatherForecast getForecastWeather(String location){
         try{
-            Connection.Response response = Jsoup.connect("https://api.caiyunapp.com/v2/AtNnPO587kFSQOHr/"+location+"/forecast.json")
+            Connection.Response response = Jsoup.connect("https://free-api.heweather.com/s6/weather/forecast?key=f07e1d0027a24a47ad7e47dbf62a2e7c&location="+location)
                                                     .ignoreContentType(true)
                                                     .execute();
             String json = response.body();
-            int index1 = json.indexOf("\"daily\"");
-            int index2 = json.indexOf("\"primary\"");
-            json = json.substring(index1+8,index2-1);
-            System.out.println(json);
-
+            int index1 = json.indexOf("\"daily_forecast\"");
+            json = json.substring(index1,json.length()-3);
+            json = "{"+json+"}";
+            //System.out.println(json);
+            //使用Gson将json转换成对象。
+            sWeatherForecast = new Gson().fromJson(json, weatherForecast.class);
+//            System.out.println(sWeatherForecast.getDaily_forecast().get(1).getTmp_max()+"\n"+
+//                    sWeatherForecast.getDaily_forecast().get(1).getDate());
         }catch (Exception e){
             e.printStackTrace();
         }
+        return sWeatherForecast;
     }
 }
