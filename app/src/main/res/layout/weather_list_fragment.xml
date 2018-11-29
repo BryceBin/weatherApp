@@ -9,7 +9,7 @@
 
     <android.support.v7.widget.RecyclerView
             android:layout_width="0dp"
-            android:layout_height="0dp"
+            android:layout_height="387dp"
             android:background="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             android:scrollbars="horizontal" android:id="@+id/recyclerView"
@@ -24,7 +24,36 @@
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toTopOf="@+id/recyclerView"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
             android:layout_marginLeft="8dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp">
+            android:layout_marginRight="8dp" app:layout_constraintHorizontal_bias="0.0">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/temperature_textView"
+                android:text="16"
+                app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+                android:layout_marginTop="4dp"
+                android:textSize="55sp" android:layout_marginBottom="2dp"
+                app:layout_constraintBottom_toTopOf="@+id/location_textView"/>
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/location_textView"
+                android:text="岳麓区 清水路"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="188dp"
+                android:textSize="24sp"/>
+        <TextView
+                android:text="晴"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/skyCon_textView"
+                app:layout_constraintStart_toStartOf="@+id/location_textView"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                app:layout_constraintHorizontal_bias="0.0" android:textSize="24sp"
+                app:layout_constraintTop_toBottomOf="@+id/location_textView"/>
 
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

@@ -1,8 +1,11 @@
 package com.example.bin.weatherapp;
 
+import android.util.Log;
 import com.google.gson.Gson;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
+
+import java.util.List;
 
 
 /**
@@ -12,6 +15,7 @@ import org.jsoup.Jsoup;
 public class weatherSpider {
     public static weatherRealTime sWeatherRealTime;
     public static weatherForecast sWeatherForecast;
+    private static final String TAG = "weatherSpider";
 
     public static weatherRealTime getRealTimeWeather(String location){
         try {
@@ -27,6 +31,7 @@ public class weatherSpider {
             //System.out.println(json);
 
             sWeatherRealTime = new Gson().fromJson(json, weatherRealTime.class);
+            Log.i(TAG, "getRealTimeWeather: output test info");
             System.out.println(sWeatherRealTime.getCloud()+"\n"+
                     sWeatherRealTime.getFl()+"\n"+
                     sWeatherRealTime.getHum()+"\n"+
@@ -40,7 +45,7 @@ public class weatherSpider {
         return sWeatherRealTime;
     }
 
-    public static weatherForecast getForecastWeather(String location){
+    public static List<weatherForecast.Daily_forecast> getForecastWeather(String location) throws Exception{
         try{
             Connection.Response response = Jsoup.connect("https://free-api.heweather.com/s6/weather/forecast?key=f07e1d0027a24a47ad7e47dbf62a2e7c&location="+location)
                                                     .ignoreContentType(true)
@@ -52,11 +57,11 @@ public class weatherSpider {
             //System.out.println(json);
             //使用Gson将json转换成对象。
             sWeatherForecast = new Gson().fromJson(json, weatherForecast.class);
-//            System.out.println(sWeatherForecast.getDaily_forecast().get(1).getTmp_max()+"\n"+
-//                    sWeatherForecast.getDaily_forecast().get(1).getDate());
+            Log.i(TAG, "getForecastWeather: "+sWeatherForecast.getDaily_forecast().get(1).getTmp_max()+"\n"+
+                    sWeatherForecast.getDaily_forecast().get(1).getDate());
         }catch (Exception e){
             e.printStackTrace();
         }
-        return sWeatherForecast;
+        return sWeatherForecast.getDaily_forecast();
     }
 }

@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.MapView;
+import com.ant.liao.GifView;
 
 public class MainActivity extends AppCompatActivity {
     @Override
