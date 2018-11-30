@@ -30,8 +30,12 @@ public class weatherListFragment extends Fragment{
     private RecyclerView mRecyclerView;
     private HomeAdapter mAdapter;
     private List<weatherForecast.Daily_forecast> mDatas;
+    private weatherRealTime mWeatherRealTime;
     private static String localtion = "121.6544,25.1552";
     private static final String TAG = "weatherListFragment";
+    private TextView temperatrueNow;
+    private TextView localtionNow;
+    private TextView skyConNow;
 
     public void setupAdapter(){
         if(isAdded()){
@@ -64,12 +68,33 @@ public class weatherListFragment extends Fragment{
         }
     }
 
+    //后台异步线程获取实时天气情况
+    private class fetchNowTask extends AsyncTask<Void, Void, weatherRealTime>{
+        @Override
+        protected weatherRealTime doInBackground(Void... voids) {
+            try{
+                mWeatherRealTime = getRealTimeWeather(localtion);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            return mWeatherRealTime;
+        }
+
+        @Override
+        protected void onPostExecute(weatherRealTime weatherRealTime) {
+            temperatrueNow.setText(weatherRealTime.getTmp()+"°C");
+            //localtionNow.setText(weatherRealTime.);
+            skyConNow.setText(weatherRealTime.getCond_txt());
+        }
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
         //后台线程获取天气数据
         new fetchForecastTask().execute();
+        new fetchNowTask().execute();
     }
 
     @Nullable
@@ -79,6 +104,10 @@ public class weatherListFragment extends Fragment{
         //绑定mRecyclerView并设置layoutManager
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        //绑定控件
+        temperatrueNow = view.findViewById(R.id.temperature_textView);
+        localtionNow = view.findViewById(R.id.location_textView);
+        skyConNow = view.findViewById(R.id.skyCon_textView);
 
         return view;
     }
