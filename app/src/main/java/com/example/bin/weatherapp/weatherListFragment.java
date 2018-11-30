@@ -31,10 +31,10 @@ public class weatherListFragment extends Fragment{
     private HomeAdapter mAdapter;
     private List<weatherForecast.Daily_forecast> mDatas;
     private weatherRealTime mWeatherRealTime;
-    private static String localtion = "121.6544,25.1552";
+    private static String location = "121.6544,25.1552";
     private static final String TAG = "weatherListFragment";
     private TextView temperatrueNow;
-    private TextView localtionNow;
+    private TextView locationNow;
     private TextView skyConNow;
 
     public void setupAdapter(){
@@ -51,7 +51,7 @@ public class weatherListFragment extends Fragment{
             mDatas = new ArrayList<>();
             List<weatherForecast.Daily_forecast> daily_forecasts = null;
             try{
-                daily_forecasts = new weatherSpider().getForecastWeather(localtion);
+                daily_forecasts = new weatherSpider().getForecastWeather(location);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -73,7 +73,7 @@ public class weatherListFragment extends Fragment{
         @Override
         protected weatherRealTime doInBackground(Void... voids) {
             try{
-                mWeatherRealTime = getRealTimeWeather(localtion);
+                mWeatherRealTime = getRealTimeWeather(location);
             }catch (Exception e){
                 e.printStackTrace();
             }
@@ -82,8 +82,8 @@ public class weatherListFragment extends Fragment{
 
         @Override
         protected void onPostExecute(weatherRealTime weatherRealTime) {
-            temperatrueNow.setText(weatherRealTime.getTmp()+"°C");
-            //localtionNow.setText(weatherRealTime.);
+            temperatrueNow.setText(weatherRealTime.getTmp()+"°");
+            //locationNow.setText(weatherRealTime.);
             skyConNow.setText(weatherRealTime.getCond_txt());
         }
     }
@@ -106,7 +106,7 @@ public class weatherListFragment extends Fragment{
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         //绑定控件
         temperatrueNow = view.findViewById(R.id.temperature_textView);
-        localtionNow = view.findViewById(R.id.location_textView);
+        locationNow = view.findViewById(R.id.location_textView);
         skyConNow = view.findViewById(R.id.skyCon_textView);
 
         return view;
@@ -139,8 +139,8 @@ public class weatherListFragment extends Fragment{
             holder.condPic.setBackgroundResource(getResId(daily_forecast.getCond_code_d()));
             holder.skyCon.setText(daily_forecast.getCond_txt_d());
             holder.date.setText(daily_forecast.getDate());
-            holder.tmpMax.setText(daily_forecast.getTmp_max()+"°C");
-            holder.tmpMin.setText(daily_forecast.getTmp_min()+"°C");
+            holder.tmpMax.setText(daily_forecast.getTmp_max()+"°");
+            holder.tmpMin.setText(daily_forecast.getTmp_min()+"°");
         }
 
         @Override
