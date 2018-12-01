@@ -5,16 +5,65 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.widget.Toast;
+import com.amap.api.location.AMapLocation;
+import com.amap.api.location.AMapLocationClient;
+import com.amap.api.location.AMapLocationClientOption;
+import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.MapView;
 import com.ant.liao.GifView;
 
 public class MainActivity extends AppCompatActivity {
+    public AMapLocationClient mAMapLocationClient;
+    public AMapLocationListener mAMapLocationListener;
+    public AMapLocationClientOption mAMapLocationClientOption;
+    private static final String TAG = "MainActivity";
+
+
+    public void setLocationSpiderConfig(){
+        //初始化并绑定监听
+        mAMapLocationListener = new AMapLocationListener() {
+            @Override
+            public void onLocationChanged(AMapLocation aMapLocation) {
+                //解析aMapLocation
+                if (aMapLocation!=null){
+                    if (aMapLocation.getErrorCode()==0){//等于0则成功定位
+                        Log.i(TAG, "onLocationChanged: 定位成功\n"+"经纬度："+aMapLocation.getLongitude()+"."+aMapLocation.getLatitude()
+                                                                        +"\n地址："+aMapLocation.getAddress());
+                        weatherListFragment.location = aMapLocation.getLongitude()+","+aMapLocation.getLatitude();
+                        weatherListFragment.sLocation = aMapLocation.getCity()+aMapLocation.getDistrict();
+
+                    }
+                    else{
+                        Log.e(TAG, "onLocationChanged: "+aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
+                    }
+                }
+            }
+        };
+
+        mAMapLocationClient = new AMapLocationClient(getApplicationContext());
+        mAMapLocationClient.setLocationListener(mAMapLocationListener);
+
+        mAMapLocationClientOption = new AMapLocationClientOption();
+        //高精度模式
+        mAMapLocationClientOption.setLocationMode(AMapLocationClientOption.AMapLocationMode.Hight_Accuracy);
+        //单次定位
+        mAMapLocationClientOption.setOnceLocation(true);
+
+        //给定位客户端对象设置定位参数
+        mAMapLocationClient.setLocationOption(mAMapLocationClientOption);
+        //启动定位
+        mAMapLocationClient.startLocation();
+
+
+
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -40,11 +89,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
         setContentView(R.layout.activity_main);
-        //getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE,R.layout.title_bar);
-        //getActionBar().hide();
-        //getActionBar().setIcon(R.drawable.title_bar_icon);
+
+        setLocationSpiderConfig();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
@@ -54,5 +101,12 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.fragment_container,fragment)
                     .commit();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mAMapLocationClient.stopLocation();
+        mAMapLocationClient.onDestroy();
     }
 }

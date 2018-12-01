@@ -33,8 +33,9 @@ public class weatherListFragment extends Fragment{
     private myAdapter mAdapter;
     private List<weatherForecast.Daily_forecast> mDatas;
     private weatherRealTime mWeatherRealTime;
-    private static String location = "121.6544,25.1552";
+    public static String location = "121.6544,25.1552";
     private static final String TAG = "weatherListFragment";
+    public static String sLocation = "岳麓区 清水路";
     private TextView temperatrueNow;
     private TextView locationNow;
     private TextView skyConNow;
@@ -86,6 +87,7 @@ public class weatherListFragment extends Fragment{
         @Override
         protected weatherRealTime doInBackground(Void... voids) {
             try{
+                Log.i(TAG, "doInBackground: Location is "+location);
                 mWeatherRealTime = getRealTimeWeather(location);
             }catch (Exception e){
                 e.printStackTrace();
@@ -96,7 +98,7 @@ public class weatherListFragment extends Fragment{
         @Override
         protected void onPostExecute(weatherRealTime weatherRealTime) {
             temperatrueNow.setText(weatherRealTime.getTmp()+"°");
-            //locationNow.setText(weatherRealTime.);
+            locationNow.setText(sLocation);
             skyConNow.setText(weatherRealTime.getCond_txt());
             skyIcon.setBackgroundResource(myAdapter.getResId(weatherRealTime.getCond_code()));
         }
