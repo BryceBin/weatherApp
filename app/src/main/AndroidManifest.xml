@@ -2,8 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.example.bin.weatherapp">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
     <!-- 允许程序打开网络套接字 -->
     <uses-permission android:name="android.permission.INTERNET"/>
     <!-- 允许程序设置内置sd卡的写权限 -->
@@ -41,6 +39,8 @@
                 android:value="d4b941ca9ce54236a76f5f495590f935"/>
 
         <activity android:name=".map">
+        </activity>
+        <activity android:name=".forecastMsg">
         </activity>
     </application>
 

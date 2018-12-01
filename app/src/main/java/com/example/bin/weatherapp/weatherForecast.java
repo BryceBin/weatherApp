@@ -5,6 +5,9 @@ package com.example.bin.weatherapp;
  * @Date: 2018/11/29
  */
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class weatherForecast {
@@ -18,27 +21,29 @@ public class weatherForecast {
     }
     //一天的具体天气预报类
     class Daily_forecast {
-        private String cond_code_d;
-        private String cond_code_n;
-        private String cond_txt_d;
-        private String cond_txt_n;
-        private String date;
-        private String hum;
-        private String mr;
-        private String ms;
-        private String pcpn;
-        private String pop;
-        private String pres;
-        private String sr;
-        private String ss;
-        private String tmp_max;
-        private String tmp_min;
-        private String uv_index;
-        private String vis;
-        private String wind_deg;
-        private String wind_dir;
-        private String wind_sc;
-        private String wind_spd;
+        private String cond_code_d;//白天天气状况代码
+        private String cond_code_n;//晚间天气状况代码
+        private String cond_txt_d;//白天天气状况描述
+        private String cond_txt_n;//晚间天气状况描述
+        private String date;//预报日期
+        private String hum;//相对湿度
+        private String mr;//月升时间
+        private String ms;//月落时间
+        private String pcpn;//降水量
+        private String pop;//降水概率
+        private String pres;//大气压强
+        private String sr;//日出时间
+        private String ss;//日落时间
+        private String tmp_max;//最高温度
+        private String tmp_min;//最低温度
+        private String uv_index;//紫外线强度指数
+        private String vis;//能见度，单位：公里
+        private String wind_deg;//风向360角度
+        private String wind_dir;//风向
+        private String wind_sc;//风力
+        private String wind_spd;//风速，公里/小时
+
+
         public void setCond_code_d(String cond_code_d) {
             this.cond_code_d = cond_code_d;
         }

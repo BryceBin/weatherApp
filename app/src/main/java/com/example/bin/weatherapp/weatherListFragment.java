@@ -1,5 +1,6 @@
 package com.example.bin.weatherapp;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import com.google.gson.Gson;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
@@ -28,7 +30,7 @@ import static com.example.bin.weatherapp.weatherSpider.getRealTimeWeather;
  */
 public class weatherListFragment extends Fragment{
     private RecyclerView mRecyclerView;
-    private HomeAdapter mAdapter;
+    private myAdapter mAdapter;
     private List<weatherForecast.Daily_forecast> mDatas;
     private weatherRealTime mWeatherRealTime;
     private static String location = "121.6544,25.1552";
@@ -36,11 +38,21 @@ public class weatherListFragment extends Fragment{
     private TextView temperatrueNow;
     private TextView locationNow;
     private TextView skyConNow;
+    private TextView skyIcon;
 
     public void setupAdapter(){
         if(isAdded()){
-            mAdapter = new HomeAdapter(mDatas);
+            mAdapter = new myAdapter(mDatas);
             mRecyclerView.setAdapter(mAdapter);
+            //设置点击事件的处理逻辑，点击后跳转到新的Activity，并传递了对应的DailyForecast对象。
+            mAdapter.setMyItemClickListener(new myAdapter.MyItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    Intent intent = new Intent(getContext(),forecastMsg.class);
+                    intent.putExtra("data",new Gson().toJson(mDatas.get(position)));
+                    startActivity(intent);
+                }
+            });
         }
     }
 
@@ -62,6 +74,7 @@ public class weatherListFragment extends Fragment{
         protected void onPostExecute(List<weatherForecast.Daily_forecast> daily_forecasts) {
             //将获得的数据绑定到mData中
             mDatas = daily_forecasts;
+            mDatas.remove(0);//去掉当天的天气
             Log.i(TAG, "onPostExecute: size is "+mDatas.size());
             //数据获取完毕后通过Adapter显示上去
             setupAdapter();
@@ -85,6 +98,7 @@ public class weatherListFragment extends Fragment{
             temperatrueNow.setText(weatherRealTime.getTmp()+"°");
             //locationNow.setText(weatherRealTime.);
             skyConNow.setText(weatherRealTime.getCond_txt());
+            skyIcon.setBackgroundResource(myAdapter.getResId(weatherRealTime.getCond_code()));
         }
     }
 
@@ -108,67 +122,9 @@ public class weatherListFragment extends Fragment{
         temperatrueNow = view.findViewById(R.id.temperature_textView);
         locationNow = view.findViewById(R.id.location_textView);
         skyConNow = view.findViewById(R.id.skyCon_textView);
+        skyIcon = view.findViewById(R.id.skyCon_frag);
 
         return view;
     }
 
-    class HomeAdapter extends RecyclerView.Adapter<HomeAdapter.MyViewHolder> {
-        private List<weatherForecast.Daily_forecast> data;
-        public HomeAdapter(List<weatherForecast.Daily_forecast> mdatas){
-            this.data = mdatas;
-        }
-        @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            //将单个天气预测布局实例化
-            MyViewHolder holder = new MyViewHolder(LayoutInflater.from(
-                    parent.getContext()).inflate(R.layout.single_forecast, parent,
-                    false));
-            return holder;
-        }
-
-        int getResId(String code){
-            //根据天气代码返回对应天气图片的id
-            code = "p"+code;
-            return getResources().getIdentifier(code,"drawable",getActivity().getApplication().getPackageName());
-        }
-
-        @Override
-        public void onBindViewHolder(MyViewHolder holder, int position) {
-            weatherForecast.Daily_forecast daily_forecast = data.get(position);
-            //显示对应的信息
-            holder.condPic.setBackgroundResource(getResId(daily_forecast.getCond_code_d()));
-            holder.skyCon.setText(daily_forecast.getCond_txt_d());
-            holder.date.setText(daily_forecast.getDate());
-            holder.tmpMax.setText(daily_forecast.getTmp_max()+"°");
-            holder.tmpMin.setText(daily_forecast.getTmp_min()+"°");
-        }
-
-        @Override
-        public int getItemCount() {
-            return data.size();
-        }
-
-        class MyViewHolder extends RecyclerView.ViewHolder {
-            TextView condPic;
-            TextView skyCon;
-            TextView date;
-            TextView tmpMax;
-            TextView tmpMin;
-            public MyViewHolder(View view) {
-                super(view);
-                try{
-                    //绑定空间
-                    condPic = view.findViewById(R.id.skyConPic_textView);
-                    skyCon = view.findViewById(R.id.skyCon);
-                    date = view.findViewById(R.id.date_textView);
-                    tmpMax = view.findViewById(R.id.tmp_max);
-                    tmpMin = view.findViewById(R.id.tmp_min);
-                }catch (Exception e){
-                    Log.i(TAG, "MyViewHolder: find view fail here");
-                    e.printStackTrace();
-                }
-
-            }
-        }
-    }
 }
