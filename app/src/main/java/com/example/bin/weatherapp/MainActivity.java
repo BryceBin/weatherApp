@@ -17,6 +17,7 @@ import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps.AMap;
 import com.amap.api.maps.MapView;
+import com.amap.api.maps.UiSettings;
 import com.ant.liao.GifView;
 
 public class MainActivity extends AppCompatActivity {
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
 
                     }
                     else{
+                        //定位失败，日志显示错误信息
                         Log.e(TAG, "onLocationChanged: "+aMapLocation.getErrorCode() + ", errInfo:" + aMapLocation.getErrorInfo());
                     }
                 }
@@ -106,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        //停止定位并销毁对象
         mAMapLocationClient.stopLocation();
         mAMapLocationClient.onDestroy();
     }
