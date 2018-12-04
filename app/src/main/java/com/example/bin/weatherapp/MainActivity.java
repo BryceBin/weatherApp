@@ -3,13 +3,11 @@ package com.example.bin.weatherapp;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.Window;
+import android.view.*;
 import android.widget.Toast;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
@@ -19,6 +17,10 @@ import com.amap.api.maps.AMap;
 import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.ant.liao.GifView;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     public AMapLocationClient mAMapLocationClient;
@@ -26,9 +28,15 @@ public class MainActivity extends AppCompatActivity {
     public AMapLocationClientOption mAMapLocationClientOption;
     private static final String TAG = "MainActivity";
 
+    public static List<String> tags;
+
+    public static ActionBar sActionBar;
+
     public static String cityNow = "长沙";
     public static Boolean isCelsius = true;
     public static Boolean isNoteOn = false;
+
+    public static citys.City sCity ;
 
     private int REQUESTCODE = 1;
 
@@ -83,21 +91,46 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    public static String getTag(){
+        return tags.get(tags.size()-2);
+    }
+
+    public void shareWeather(){
+        //隐式intent调用系统API进行分享
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, weatherListFragment.formatShareText());//extraText为文本的内容
+        startActivity(intent);
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.map:
-                startActivity(new Intent(MainActivity.this, map.class));
+                //startActivity(new Intent(MainActivity.this, map.class));
+                Fragment fragment = new map();
+                tags.add("mapTag");
+                getSupportFragmentManager().beginTransaction()
+                        .addToBackStack(null)
+                        .add(R.id.fragment_container,fragment,"mapTag").commit();
                 return true;
             case R.id.setting:{
                 Toast.makeText(this,"点击了setting",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this,setting.class);
                 intent.putExtra("city",cityNow);
-                intent.putExtra("isMetric",isCelsius);
+                intent.putExtra("isCelsius",isCelsius);
                 intent.putExtra("isNoteOn",isNoteOn);
                 startActivityForResult(intent,REQUESTCODE);
                 return true;
             }
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            case R.id.share_detail:
+                //todo
+                shareWeather();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
@@ -105,28 +138,38 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.i(TAG, "onActivityResult: req code = "+requestCode+" res code = "+resultCode);
         if(resultCode==1&&requestCode==REQUESTCODE){
-            if (cityNow!=data.getStringExtra("city")){
-                cityNow = data.getStringExtra("data");
-                isChanged = true;
-                weatherListFragment.sLocation = cityNow;
-                //weatherListFragment.location = weatherSpider.getNewLocation(cityNow);
+            Log.i(TAG, "onActivityResult: return MainActivity");
+            Log.i(TAG, "onActivityResult: isCelsius = "+data.getBooleanExtra("isCelsius",false));
 
-            }
             if (isCelsius!=data.getBooleanExtra("isCelsius",false)){
                 isCelsius = data.getBooleanExtra("isCelsius",false);
-                isChanged = true;
                 if (!isCelsius){
                     weatherListFragment.tempUnit = "°F";
                 }
+                else{
+                    weatherListFragment.tempUnit = "°C";
+                }
+                weatherListFragment.tempUnitChanged = true;
             }
             if (isNoteOn!=data.getBooleanExtra("isNoteOn",false)){
                 isNoteOn = data.getBooleanExtra("isNoteOn",false);
-                isChanged = true;
+                weatherListFragment.noteChanged = true;
             }
-            if (isChanged){
-                //todo
+
+            String json = data.getStringExtra("city");
+            if (json.equals("nothing"))return;
+            sCity = new Gson().fromJson(json,citys.City.class);
+            if (sCity.getLocation()!=cityNow){
+                Log.i(TAG, "onActivityResult: fetch new weather");
+                cityNow = sCity.getLocation();
+                weatherListFragment.sLocation = cityNow;
+                weatherListFragment.location = sCity.getLon()+","+sCity.getLat();
+                weatherListFragment.needUpdate=true;
+
             }
+
         }
     }
 
@@ -135,23 +178,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        tags = new ArrayList<>();
+
+        sActionBar = getSupportActionBar();
+        if (sActionBar!=null){
+            sActionBar.setHomeButtonEnabled(false);
+            sActionBar.setDisplayHomeAsUpEnabled(false);
+//            sActionBar.getCustomView().findViewById(R.id.share_detail).setVisibility(View.INVISIBLE);
+        }
+
         setLocationSpiderConfig();
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+        tags.add("listTag");
         if (fragment == null){
             fragment = new weatherListFragment();
             fragmentManager.beginTransaction()
-                    .add(R.id.fragment_container,fragment)
+                    .add(R.id.fragment_container,fragment,"listTag")
                     .commit();
         }
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
         //停止定位并销毁对象
         mAMapLocationClient.stopLocation();
         mAMapLocationClient.onDestroy();
+        super.onDestroy();
     }
 }

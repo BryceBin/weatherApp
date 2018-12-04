@@ -8,12 +8,13 @@
             android:title='""'></item>
 
     <item
-        android:id="@+id/map"
-        android:title="@string/map"
-        app:showAsAction="never"></item>
+            android:id="@+id/map_detail"
+            android:title="@string/map"
+            app:showAsAction="never"></item>
 
     <item
-            android:id="@+id/setting"
+            android:id="@+id/setting_detail"
             android:title="@string/setting"
             app:showAsAction="never"></item>
+
 </menu>

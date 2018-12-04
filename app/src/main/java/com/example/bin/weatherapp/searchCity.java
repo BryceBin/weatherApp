@@ -2,10 +2,12 @@ package com.example.bin.weatherapp;
 
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
@@ -56,11 +58,27 @@ public class searchCity extends AppCompatActivity {
         return s.matches(reg)&&!s.isEmpty();
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_city);
+
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar!=null){
+            actionBar.setTitle(R.string.setCity);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
 
         mCities = new ArrayList<>();
 
@@ -68,6 +86,7 @@ public class searchCity extends AppCompatActivity {
 
         mSearchView = findViewById(R.id.search_text);
         mSearchView.setIconified(false);
+        mSearchView.setQueryHint("搜索城市");
         mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -130,9 +149,11 @@ public class searchCity extends AppCompatActivity {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                //
+                //选中一个城市后直接返回上一个activity
                 resCity = mCities.get(i);
                 Log.i(TAG, "onItemClick: "+resCity.getLocation());
+                //onDestroy();
+                finish();
             }
         });
 
@@ -140,9 +161,10 @@ public class searchCity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    public void finish() {
         mIntent.putExtra("resCity", new Gson().toJson(resCity));
         setResult(2,mIntent);
+        super.finish();
     }
+
 }

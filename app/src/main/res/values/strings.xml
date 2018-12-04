@@ -11,4 +11,7 @@
     <string name="note_string">天气通知</string>
     <string name="on">打开</string>
     <string name="off">关闭</string>
+    <string name="locationNow">当前位置</string>
+    <string name="setCity">设置位置</string>
+    <string name="weatherDetail">天气详情</string>
 </resources>

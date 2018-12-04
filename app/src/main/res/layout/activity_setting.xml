@@ -12,34 +12,45 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView" android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_marginBottom="631dp"/>
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintHorizontal_bias="0.0" app:layout_constraintVertical_bias="0.0"/>
     <TextView
             android:text="长沙"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/location_setting" android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="@+id/textView" app:layout_constraintTop_toBottomOf="@+id/textView"
-            android:layout_marginTop="9dp"/>
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:layout_marginRight="8dp" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="40dp" app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.0"/>
     <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
-            android:id="@+id/view2" android:layout_marginTop="69dp" app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginBottom="85dp"
+            android:id="@+id/view2"
             app:layout_constraintStart_toStartOf="parent"
             android:background="@color/colorAccent"
-            app:layout_constraintVertical_bias="0.095" android:visibility="visible"
-            app:layout_constraintBottom_toTopOf="@+id/view3"/>
+            android:visibility="visible"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="76dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.0"/>
     <TextView
             android:text="@string/temp_unit"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView3" android:textSize="18sp"
-            app:layout_constraintTop_toBottomOf="@+id/view2" app:layout_constraintStart_toEndOf="@+id/location_setting"
-            android:layout_marginBottom="14dp" app:layout_constraintEnd_toEndOf="@+id/location_setting"
-            app:layout_constraintBottom_toTopOf="@+id/temp_unit"/>
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="88dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp" app:layout_constraintHorizontal_bias="0.024"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.0"/>
     <TextView
             android:text="@string/temp_C"
             android:layout_width="wrap_content"
@@ -47,40 +58,60 @@
             android:id="@+id/temp_unit" android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="16dp"
             app:layout_constraintBottom_toBottomOf="parent" android:layout_marginStart="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" android:layout_marginBottom="518dp"/>
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp" app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.176"/>
     <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:background="@color/colorAccent"
             android:id="@+id/view3" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@+id/view2"
-            android:layout_marginBottom="503dp"/>
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.227"/>
     <TextView
             android:text="@string/note_string"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView5" android:textSize="18sp"
-            android:layout_marginTop="12dp" app:layout_constraintTop_toBottomOf="@+id/view3"
-            app:layout_constraintStart_toEndOf="@+id/note_switch" app:layout_constraintEnd_toEndOf="@+id/note_switch"/>
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp" android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:layout_marginRight="8dp" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp" app:layout_constraintHorizontal_bias="0.024"
+            app:layout_constraintVertical_bias="0.237"/>
     <CheckBox
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/note_switch_checkBox" android:layout_marginEnd="16dp"
-            android:layout_marginRight="16dp" android:layout_marginBottom="22dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toTopOf="@+id/view4"/>
+            android:layout_marginRight="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="8dp"
+            app:layout_constraintVertical_bias="0.263" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="8dp" android:layout_marginStart="8dp"
+            app:layout_constraintHorizontal_bias="1.0"/>
     <TextView
-            android:text="@string/on"
+            android:text="@string/off"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/note_switch" android:textSize="18sp"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
             android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
-            app:layout_constraintTop_toBottomOf="@+id/textView5"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:layout_marginRight="8dp" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="8dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp" app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintVertical_bias="0.289"/>
     <View
             android:layout_width="wrap_content"
             android:layout_height="1dp"
             android:background="@color/colorAccent"
-            android:id="@+id/view4" app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="14dp"
-            app:layout_constraintTop_toBottomOf="@+id/note_switch"/>
+            android:id="@+id/view4" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="8dp" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.335"
+    />
 
 </android.support.constraint.ConstraintLayout>

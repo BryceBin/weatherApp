@@ -1,13 +1,16 @@
 package com.example.bin.weatherapp;
 
 import android.content.Intent;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.TextView;
+import com.google.gson.Gson;
 
 public class setting extends AppCompatActivity {
     private TextView location;
@@ -15,12 +18,21 @@ public class setting extends AppCompatActivity {
     private CheckBox cb;
     private TextView note;
     public Intent mIntent = new Intent();
-    private boolean isChenged = false;
-    private String newCity = "北京";
     private boolean isCelsius = true;
     private boolean isNoteOn = false;
+    private citys.City selectedCity = null;
 
     private static final String TAG = "setting";
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     public void bindViews(){
         location = findViewById(R.id.location_setting);
@@ -47,11 +59,11 @@ public class setting extends AppCompatActivity {
                 Log.i(TAG, "onClick: click unit");
                 if (unit.getText().equals("摄氏度")){
                     unit.setText(R.string.temp_F);
-                    isCelsius = true;
+                    isCelsius = false;
                 }
                 else{
                     unit.setText(R.string.temp_C);
-                    isCelsius = false;
+                    isCelsius = true;
                 }
             }
         });
@@ -77,26 +89,66 @@ public class setting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
 
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar!=null){
+            actionBar.setTitle(R.string.setting);
+            actionBar.setHomeButtonEnabled(true);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         bindViews();
         
         setListeners();
+
+        Intent intent = getIntent();
+        location.setText(intent.getStringExtra("city"));
+        if (!intent.getBooleanExtra("isCelsius",true)){
+            unit.setText(R.string.temp_F);
+        }
+        if (intent.getBooleanExtra("isNoteOn",false)){
+            cb.setChecked(true);
+            note.setText(R.string.on);
+        }
+
+        mIntent.putExtra("city","nothing");
 
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        Log.i(TAG, "onActivityResult: req code = "+requestCode+"res code = "+resultCode);
         if (resultCode==2&&requestCode==2){
             //解析data
+            Log.i(TAG, "onActivityResult: get resCity here");
+            String json = data.getStringExtra("resCity");
+            selectedCity = new Gson().fromJson(json,citys.City.class);
+            if (selectedCity==null)return;
+            location.setText(selectedCity.getLocation());
         }
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mIntent.putExtra("city",newCity);
+    public void finish() {
+        if (selectedCity!=null){
+            mIntent.putExtra("city",new Gson().toJson(selectedCity));
+        }
         mIntent.putExtra("isCelsius",isCelsius);
         mIntent.putExtra("isNoteOn",isNoteOn);
         setResult(1,mIntent);
+        super.finish();
     }
+
+    @Override
+    public void onBackPressed() {
+        if (selectedCity!=null){
+            mIntent.putExtra("city",new Gson().toJson(selectedCity));
+        }
+        mIntent.putExtra("isCelsius",isCelsius);
+        mIntent.putExtra("isNoteOn",isNoteOn);
+        setResult(1,mIntent);
+        Log.i(TAG, "onBackPressed: return mainactivity with intent");
+        super.onBackPressed();
+    }
+
 }
