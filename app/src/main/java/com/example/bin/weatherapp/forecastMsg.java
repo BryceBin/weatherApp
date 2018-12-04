@@ -48,7 +48,7 @@ public class forecastMsg extends AppCompatActivity {
         String[] dates = mDaily_forecast.getDate().split("-");
         date.setText(dates[1]+"月"+dates[2]+"日");
         weekday.setText(getWeekDay(mDaily_forecast.getDate()));
-        temperature.setText(mDaily_forecast.getTmp_min()+"°C~"+mDaily_forecast.getTmp_max()+"°C");
+        temperature.setText(weatherListFragment.celsiusToFahrenheit(mDaily_forecast.getTmp_min())+weatherListFragment.tempUnit+"~"+weatherListFragment.celsiusToFahrenheit(mDaily_forecast.getTmp_max())+weatherListFragment.tempUnit);
         wind.setText(mDaily_forecast.getWind_dir()+mDaily_forecast.getWind_sc()+"级");
         hum.setText("相对湿度:"+mDaily_forecast.getHum());
         pres.setText("大气压强:"+mDaily_forecast.getPres()+"Kpa");

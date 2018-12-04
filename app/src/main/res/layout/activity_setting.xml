@@ -7,4 +7,80 @@
         android:layout_height="match_parent"
         tools:context=".setting">
 
+    <TextView
+            android:text="@string/location"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView" android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginBottom="631dp"/>
+    <TextView
+            android:text="长沙"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/location_setting" android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="@+id/textView" app:layout_constraintTop_toBottomOf="@+id/textView"
+            android:layout_marginTop="9dp"/>
+    <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:id="@+id/view2" android:layout_marginTop="69dp" app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginBottom="85dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:background="@color/colorAccent"
+            app:layout_constraintVertical_bias="0.095" android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/view3"/>
+    <TextView
+            android:text="@string/temp_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView3" android:textSize="18sp"
+            app:layout_constraintTop_toBottomOf="@+id/view2" app:layout_constraintStart_toEndOf="@+id/location_setting"
+            android:layout_marginBottom="14dp" app:layout_constraintEnd_toEndOf="@+id/location_setting"
+            app:layout_constraintBottom_toTopOf="@+id/temp_unit"/>
+    <TextView
+            android:text="@string/temp_C"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/temp_unit" android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="16dp"
+            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginStart="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView3" android:layout_marginBottom="518dp"/>
+    <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            android:id="@+id/view3" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@+id/view2"
+            android:layout_marginBottom="503dp"/>
+    <TextView
+            android:text="@string/note_string"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView5" android:textSize="18sp"
+            android:layout_marginTop="12dp" app:layout_constraintTop_toBottomOf="@+id/view3"
+            app:layout_constraintStart_toEndOf="@+id/note_switch" app:layout_constraintEnd_toEndOf="@+id/note_switch"/>
+    <CheckBox
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/note_switch_checkBox" android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp" android:layout_marginBottom="22dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toTopOf="@+id/view4"/>
+    <TextView
+            android:text="@string/on"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/note_switch" android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="8dp"
+            android:layout_marginLeft="16dp" android:layout_marginStart="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView5"/>
+    <View
+            android:layout_width="wrap_content"
+            android:layout_height="1dp"
+            android:background="@color/colorAccent"
+            android:id="@+id/view4" app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="14dp"
+            app:layout_constraintTop_toBottomOf="@+id/note_switch"/>
+
 </android.support.constraint.ConstraintLayout>

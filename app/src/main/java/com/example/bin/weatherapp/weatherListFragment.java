@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +41,12 @@ public class weatherListFragment extends Fragment{
     private TextView locationNow;
     private TextView skyConNow;
     private TextView skyIcon;
+    private ConstraintLayout mConstraintLayout;
+    private weatherForecast.Daily_forecast mToday;
+
+
+
+    public static String tempUnit = "°C";
 
     public void setupAdapter(){
         if(isAdded()){
@@ -75,6 +82,7 @@ public class weatherListFragment extends Fragment{
         protected void onPostExecute(List<weatherForecast.Daily_forecast> daily_forecasts) {
             //将获得的数据绑定到mData中
             mDatas = daily_forecasts;
+            mToday = mDatas.get(0);//获取当天的预测值
             mDatas.remove(0);//去掉当天的天气
             Log.i(TAG, "onPostExecute: size is "+mDatas.size());
             //数据获取完毕后通过Adapter显示上去
@@ -97,11 +105,31 @@ public class weatherListFragment extends Fragment{
 
         @Override
         protected void onPostExecute(weatherRealTime weatherRealTime) {
-            temperatrueNow.setText(weatherRealTime.getTmp()+"°");
+            temperatrueNow.setText(celsiusToFahrenheit(weatherRealTime.getTmp())+tempUnit);
             locationNow.setText(sLocation);
             skyConNow.setText(weatherRealTime.getCond_txt());
             skyIcon.setBackgroundResource(myAdapter.getResId(weatherRealTime.getCond_code()));
+            //设置点击后跳转到当天天气具体情况页面
+            mConstraintLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(mToday!=null){
+                        Intent intent = new Intent(getActivity(),forecastMsg.class);
+                        intent.putExtra("data",new Gson().toJson(mToday));
+                        startActivity(intent);
+                    }
+                }
+            });
         }
+    }
+
+    public static String celsiusToFahrenheit(String temp){
+        if(!MainActivity.isCelsius){
+            int old = Integer.parseInt(temp);
+            double newTemp = 32 + old*1.8;
+            return String.valueOf(newTemp);
+        }
+        return temp;
     }
 
     @Override
@@ -125,6 +153,7 @@ public class weatherListFragment extends Fragment{
         locationNow = view.findViewById(R.id.location_textView);
         skyConNow = view.findViewById(R.id.skyCon_textView);
         skyIcon = view.findViewById(R.id.skyCon_frag);
+        mConstraintLayout = view.findViewById(R.id.constraintLayout);
 
         return view;
     }

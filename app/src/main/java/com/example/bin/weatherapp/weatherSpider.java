@@ -7,6 +7,8 @@ import org.jsoup.Jsoup;
 
 import java.util.List;
 
+import static com.example.bin.weatherapp.weatherListFragment.location;
+
 
 /**
  * @Author: Bhy
@@ -15,6 +17,7 @@ import java.util.List;
 public class weatherSpider {
     public static weatherRealTime sWeatherRealTime;
     public static weatherForecast sWeatherForecast;
+    public static citys sCitys;
     private static final String TAG = "weatherSpider";
 
     public static weatherRealTime getRealTimeWeather(String location){
@@ -63,5 +66,21 @@ public class weatherSpider {
             e.printStackTrace();
         }
         return sWeatherForecast.getDaily_forecast();
+    }
+
+    public static List<citys.City> getCity(String name) throws Exception{
+        Connection.Response response = Jsoup.connect("https://search.heweather.com/find?key=f07e1d0027a24a47ad7e47dbf62a2e7c&location="+name)
+                .ignoreContentType(true)
+                .execute();
+        String json = response.body();
+        int index1 = json.indexOf("{\"basic");
+        int index2 = json.indexOf(",\"status");
+        json = json.substring(index1,index2);
+        json+="}";
+        json = json.replaceAll("basic","city");
+        System.out.println(json);
+        sCitys = new Gson().fromJson(json,citys.class);
+        System.out.println(sCitys.getCity().size());
+        return sCitys.getCity();
     }
 }

@@ -70,8 +70,8 @@ public class myAdapter extends RecyclerView.Adapter<myViewHolder>{
             holder.date.setText(forecastMsg.getWeekDay(daily_forecast.getDate()));
         }
 
-        holder.tmpMax.setText(daily_forecast.getTmp_max()+"°");
-        holder.tmpMin.setText(daily_forecast.getTmp_min()+"°");
+        holder.tmpMax.setText(weatherListFragment.celsiusToFahrenheit(daily_forecast.getTmp_max())+weatherListFragment.tempUnit);
+        holder.tmpMin.setText(weatherListFragment.celsiusToFahrenheit(daily_forecast.getTmp_min())+weatherListFragment.tempUnit);
 
     }
 

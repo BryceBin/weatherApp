@@ -4,4 +4,11 @@
     <string name="map">地图</string>
     <string name="setting">设置</string>
     <string name="tomorrow">明天</string>
+    <string name="location">位置</string>
+    <string name="temp_unit">温度单位</string>
+    <string name="temp_C">摄氏度</string>
+    <string name="temp_F">华氏度</string>
+    <string name="note_string">天气通知</string>
+    <string name="on">打开</string>
+    <string name="off">关闭</string>
 </resources>

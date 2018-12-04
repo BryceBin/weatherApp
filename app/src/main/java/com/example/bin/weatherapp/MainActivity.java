@@ -26,6 +26,14 @@ public class MainActivity extends AppCompatActivity {
     public AMapLocationClientOption mAMapLocationClientOption;
     private static final String TAG = "MainActivity";
 
+    public static String cityNow = "长沙";
+    public static Boolean isCelsius = true;
+    public static Boolean isNoteOn = false;
+
+    private int REQUESTCODE = 1;
+
+    public static boolean isChanged = false;
+
 
     public void setLocationSpiderConfig(){
         //初始化并绑定监听
@@ -39,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
                                                                         +"\n地址："+aMapLocation.getAddress());
                         weatherListFragment.location = aMapLocation.getLongitude()+","+aMapLocation.getLatitude();
                         weatherListFragment.sLocation = aMapLocation.getCity()+aMapLocation.getDistrict();
+                        cityNow = aMapLocation.getCity();
 
                     }
                     else{
@@ -80,11 +89,44 @@ public class MainActivity extends AppCompatActivity {
             case R.id.map:
                 startActivity(new Intent(MainActivity.this, map.class));
                 return true;
-            case R.id.setting:
+            case R.id.setting:{
                 Toast.makeText(this,"点击了setting",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this,setting.class);
+                intent.putExtra("city",cityNow);
+                intent.putExtra("isMetric",isCelsius);
+                intent.putExtra("isNoteOn",isNoteOn);
+                startActivityForResult(intent,REQUESTCODE);
                 return true;
+            }
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode==1&&requestCode==REQUESTCODE){
+            if (cityNow!=data.getStringExtra("city")){
+                cityNow = data.getStringExtra("data");
+                isChanged = true;
+                weatherListFragment.sLocation = cityNow;
+                //weatherListFragment.location = weatherSpider.getNewLocation(cityNow);
+
+            }
+            if (isCelsius!=data.getBooleanExtra("isCelsius",false)){
+                isCelsius = data.getBooleanExtra("isCelsius",false);
+                isChanged = true;
+                if (!isCelsius){
+                    weatherListFragment.tempUnit = "°F";
+                }
+            }
+            if (isNoteOn!=data.getBooleanExtra("isNoteOn",false)){
+                isNoteOn = data.getBooleanExtra("isNoteOn",false);
+                isChanged = true;
+            }
+            if (isChanged){
+                //todo
+            }
         }
     }
 

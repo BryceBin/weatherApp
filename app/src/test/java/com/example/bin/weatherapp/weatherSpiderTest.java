@@ -20,6 +20,7 @@ import static org.junit.Assert.*;
  */
 public class weatherSpiderTest {
     private String mLocation = "121.6544,25.1552";
+    private String tCity = "北京";
     weatherSpider mWeatherSpider = new weatherSpider();
     private class fetchForecastTask extends AsyncTask<Void, Void, Void> {
         //后台线程获取天气预测值
@@ -36,11 +37,20 @@ public class weatherSpiderTest {
     @Test
     public void getRealTimeWeatherTest() {
         //mWeatherSpider.getRealTimeWeather(mLocation);
-        new fetchForecastTask().execute();
+        //new fetchForecastTask().execute();
     }
 
     @Test
     public void getForecastWeatherTest() throws Exception{
         mWeatherSpider.getForecastWeather(mLocation);
+    }
+    @Test
+    public void getCity() {
+        try{
+            mWeatherSpider.getCity(tCity);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
     }
 }
