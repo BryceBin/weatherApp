@@ -48,7 +48,7 @@ public class weatherSpider {
         return sWeatherRealTime;
     }
 
-    public static List<weatherForecast.Daily_forecast> getForecastWeather(String location) throws Exception{
+    public static List<weatherForecast.Daily_forecast> getForecastWeather(String location){
         try{
             Connection.Response response = Jsoup.connect("https://free-api.heweather.com/s6/weather/forecast?key=f07e1d0027a24a47ad7e47dbf62a2e7c&location="+location)
                                                     .ignoreContentType(true)
@@ -82,5 +82,9 @@ public class weatherSpider {
         sCitys = new Gson().fromJson(json,citys.class);
         System.out.println(sCitys.getCity().size());
         return sCitys.getCity();
+    }
+
+    public static weatherForecast.Daily_forecast getTodayForecast(String location){
+        return getForecastWeather(location).get(0);
     }
 }

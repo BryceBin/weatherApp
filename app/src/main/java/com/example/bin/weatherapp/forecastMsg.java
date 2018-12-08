@@ -54,13 +54,18 @@ public class forecastMsg extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.activity_forecast_msg,container,false);
-        Fragment fragment = getFragmentManager().findFragmentByTag(MainActivity.getTag());
-        getFragmentManager().beginTransaction().hide(fragment).commit();
+
+        if (MainActivity.isPhone){
+            Fragment fragment = getFragmentManager().findFragmentByTag(MainActivity.getTag());
+            getFragmentManager().beginTransaction().hide(fragment).commit();
+            setTitleBar();
+        }
+
         init(view);
         mDaily_forecast = new Gson().fromJson(getArguments().getString("data"), weatherForecast.Daily_forecast.class);
         setData();
 
-        setTitleBar();
+
 
         return view;
     }
@@ -90,10 +95,13 @@ public class forecastMsg extends Fragment {
 
     @Override
     public void onDestroyView() {
-        Fragment fragment = getFragmentManager().findFragmentByTag(MainActivity.getTag());
-        MainActivity.tags.remove(MainActivity.tags.size()-1);
-        weatherListFragment.setTitleBar();
-        getFragmentManager().beginTransaction().show(fragment).commit();
+        if (MainActivity.isPhone){
+            Fragment fragment = getFragmentManager().findFragmentByTag(MainActivity.getTag());
+            MainActivity.tags.remove(MainActivity.tags.size()-1);
+            weatherListFragment.setTitleBar();
+            getFragmentManager().beginTransaction().show(fragment).commit();
+        }
+
         super.onDestroyView();
     }
 

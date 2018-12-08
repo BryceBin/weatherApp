@@ -18,10 +18,9 @@ import com.amap.api.maps.MapView;
 import com.amap.api.maps.UiSettings;
 import com.amap.api.maps.model.MyLocationStyle;
 
-public class map extends Fragment {
+public class map extends AppCompatActivity {
     private static final String TAG = "map";
     private UiSettings mUiSettings;
-    private String lastTag;
 
     public void setTitleBar(){
         ActionBar actionBar = MainActivity.sActionBar;
@@ -30,25 +29,16 @@ public class map extends Fragment {
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
-    public static map newInstance(String json){
-        map mMap = new map();
-        Bundle args = new Bundle();
-        args.putString("data",json);
-        mMap.setArguments(args);
-        return mMap;
-    }
-
-    @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.activity_map,container,false);
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_map);
+        //setTitleBar();
 
-        setTitleBar();
 
-        Fragment fragment = getFragmentManager().findFragmentByTag(MainActivity.getTag());
-        getFragmentManager().beginTransaction().hide(fragment).commit();
 
-        MapView mapView = view.findViewById(R.id.map_view);
+        MapView mapView = findViewById(R.id.map_view);
+        Log.i(TAG, "onCreate: savedInstanceState is null? "+savedInstanceState==null?"true":"false");
         mapView.onCreate(savedInstanceState);
         AMap aMap = mapView.getMap();
 
@@ -81,16 +71,8 @@ public class map extends Fragment {
                 Log.i(TAG, "onMyLocationChange: "+location.getLatitude());
             }
         });
-
-        return view;
     }
 
-    @Override
-    public void onDestroyView() {
-        Fragment fragment = getFragmentManager().findFragmentByTag(MainActivity.getTag());
-        MainActivity.tags.remove(MainActivity.tags.size()-1);
-        weatherListFragment.setTitleBar();
-        getFragmentManager().beginTransaction().show(fragment).commit();
-        super.onDestroyView();
-    }
+
+
 }

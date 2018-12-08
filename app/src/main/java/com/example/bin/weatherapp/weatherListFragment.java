@@ -1,14 +1,16 @@
 package com.example.bin.weatherapp;
 
+import android.app.*;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
+import android.os.*;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -23,9 +25,9 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
 import static com.example.bin.weatherapp.weatherSpider.getForecastWeather;
 import static com.example.bin.weatherapp.weatherSpider.getRealTimeWeather;
 
@@ -38,7 +40,7 @@ public class weatherListFragment extends Fragment{
     private myAdapter mAdapter;
     private List<weatherForecast.Daily_forecast> mDatas;
     public static weatherRealTime mWeatherRealTime;
-    public static String location = "121.6544,25.1552";
+    public static String location = "112.98227692,28.19408989";
     private static final String TAG = "weatherListFragment";
     public static String sLocation = "岳麓区 清水路";
     private TextView temperatrueNow;
@@ -52,6 +54,20 @@ public class weatherListFragment extends Fragment{
     public static boolean needUpdate = false;
     public static boolean tempUnitChanged = false;
     public static boolean noteChanged = false;
+
+    private static final String NOTIFICATION_CHANNEL = "myChannel";
+
+    public static NotificationChannel genChannel(String channel){
+        NotificationChannel channel1 = null;
+        if (Build.VERSION.SDK_INT>=26){
+            channel1 = new NotificationChannel(channel,"channel1",NotificationManager.IMPORTANCE_DEFAULT);
+            channel1.enableLights(true);
+            channel1.setLightColor(Color.RED);
+            channel1.setShowBadge(true);
+        }
+
+        return channel1;
+    }
 
     private class fetchNewWeatherThread implements Runnable{
         @Override
@@ -70,13 +86,48 @@ public class weatherListFragment extends Fragment{
                     tempUnitChanged = false;
                 }
                 if (noteChanged){
-                    //todo
+                    Log.i(TAG, "run: in the out thread");
+                    // 设置通知栏
+                    if (MainActivity.isNoteOn){
+//                        Intent intent = new Intent(getActivity(),AlarmReceiver.class);
+//                        intent.setAction("notification");
+//                        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(),0,intent,0);
+//                        AlarmManager alarmManager = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+//                        int type = AlarmManager.RTC_WAKEUP;
+//                        long triggerAtMillis = new Date().getTime();
+//                        long intervalMillis = 1000 * 60;
+//                        alarmManager.setInexactRepeating(type, triggerAtMillis, intervalMillis, pendingIntent);
+//                        Log.i(TAG, "run: in thread ");
+                        Context context = getActivity();
+                        //创建一个通知管理器
+//                        NotificationManager notificationManager= (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+//                        if (Build.VERSION.SDK_INT>=26){
+//                            //API26以上必须自定义NotificationChannel
+//                            notificationManager.createNotificationChannel(genChannel(NOTIFICATION_CHANNEL));
+//
+//                        }
+//                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,NOTIFICATION_CHANNEL);
+//                        builder .setTicker("天气预报")
+//                                .setSmallIcon(R.drawable.title_bar_icon)
+//                                .setWhen(System.currentTimeMillis())
+//                                .setStyle(new NotificationCompat.InboxStyle()
+//                                                .setBigContentTitle("小天气")
+//                                                .setSummaryText("summaryText")
+//                                                .addLine(String.format("气温:%s%s~%s%s",celsiusToFahrenheit(mToday.getTmp_min()),tempUnit,celsiusToFahrenheit(mToday.getTmp_max()),tempUnit))
+//                                                .addLine(String.format("降水量:%s",mToday.getPcpn()))
+//                                                .addLine(String.format("紫外线强度:%s",mToday.getUv_index()))
+//                                                .addLine(String.format("%s%s",mToday.getWind_dir(),mToday.getWind_sc())))
+//                                .setDefaults(Notification.DEFAULT_ALL);
+//                        Notification notification = builder.build();
+//                        notificationManager.notify(10,notification);
+                    }
 
                     noteChanged = false;
                 }
             }
         }
     }
+
 
     public static String tempUnit = "°C";
 
@@ -100,15 +151,34 @@ public class weatherListFragment extends Fragment{
         if(isAdded()){
             mAdapter = new myAdapter(mDatas);
             mRecyclerView.setAdapter(mAdapter);
+
+            if (!MainActivity.isPhone){
+                //平板的话直接显示今天的预测天气
+                forecastMsg forecastMsg = com.example.bin.weatherapp.forecastMsg.newInstance(new Gson().toJson(mDatas.get(0)));
+                getFragmentManager().beginTransaction()
+                        //.addToBackStack(null)
+                        .add(R.id.forecast_fragment_container,forecastMsg,"forecastTag").commit();
+            }
+
             //设置点击事件的处理逻辑，点击后跳转到新的Fragment，并传递了对应的DailyForecast对象。
             mAdapter.setMyItemClickListener(new myAdapter.MyItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
                     forecastMsg fragment = forecastMsg.newInstance(new Gson().toJson(mDatas.get(position)));
-                    MainActivity.tags.add("forecastTag");
-                    getFragmentManager().beginTransaction()
-                            .addToBackStack(null)
-                            .add(R.id.fragment_container,fragment,"forecastTag").commit();
+                    if (MainActivity.isPhone){
+                        Log.i(TAG, "onItemClick: 是手机");
+                        MainActivity.tags.add("forecastTag");
+                        getFragmentManager().beginTransaction()
+                                .addToBackStack(null)
+                                .add(R.id.fragment_container,fragment,"forecastTag").commit();
+                    }
+                    else{
+                        Log.i(TAG, "onItemClick: 是平板");
+                        getFragmentManager().beginTransaction()
+                                //.addToBackStack(null)
+                                .replace(R.id.forecast_fragment_container,fragment,"forecastTag").commit();
+                    }
+
                 }
             });
         }
@@ -132,8 +202,11 @@ public class weatherListFragment extends Fragment{
         protected void onPostExecute(List<weatherForecast.Daily_forecast> daily_forecasts) {
             //将获得的数据绑定到mData中
             mDatas = daily_forecasts;
-            mToday = mDatas.get(0);//获取当天的预测值
-            mDatas.remove(0);//去掉当天的天气
+            if(MainActivity.isPhone){
+                mToday = mDatas.get(0);//获取当天的预测值
+                mDatas.remove(0);//去掉当天的天气
+            }
+
             Log.i(TAG, "onPostExecute: size is "+mDatas.size());
             //数据获取完毕后通过Adapter显示上去
             setupAdapter();
@@ -167,17 +240,22 @@ public class weatherListFragment extends Fragment{
                     if(mToday!=null){
                         forecastMsg forecastMsg = com.example.bin.weatherapp.forecastMsg.newInstance(new Gson().toJson(mToday));
                         //forecastMsg.setTargetFragment(this,3);
-                        MainActivity.tags.add("forecastTag");
-                        getFragmentManager().beginTransaction()
-                                //.hide(fragment)
-                                .addToBackStack(null)
-                                .add(R.id.fragment_container,forecastMsg,"forecastTag").commit();
+                        if (MainActivity.isPhone){
+                            MainActivity.tags.add("forecastTag");
+                            getFragmentManager().beginTransaction()
+                                    .addToBackStack(null)
+                                    .add(R.id.fragment_container,forecastMsg,"forecastTag").commit();
+                        }
+                        else{
+                            getFragmentManager().beginTransaction()
+                                    .addToBackStack(null)
+                                    .replace(R.id.forecast_fragment_container,forecastMsg,"forecastTag").commit();
+                        }
+
                     }
                 }
             });
         }
-
-
     }
 
     public static void setTitleBar(){
@@ -209,9 +287,7 @@ public class weatherListFragment extends Fragment{
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        //后台线程获取天气数据
-        new fetchForecastTask().execute();
-        new fetchNowTask().execute();
+
         //开启线程监听位置是否改变
         new Thread(new fetchNewWeatherThread()).start();
 
@@ -219,6 +295,7 @@ public class weatherListFragment extends Fragment{
             @Override
             public void handleMessage(Message msg) {
                 super.handleMessage(msg);
+
                 if (msg.what==1){
                     mAdapter.notifyDataSetChanged();
                     temperatrueNow.setText(celsiusToFahrenheit(tempToday)+tempUnit);
@@ -230,17 +307,28 @@ public class weatherListFragment extends Fragment{
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.weather_list_fragment,container,false);
+        //后台线程获取天气数据
+        new fetchForecastTask().execute();
+        if(MainActivity.isPhone){
+            new fetchNowTask().execute();
+        }
 
         //绑定mRecyclerView并设置layoutManager
         mRecyclerView = view.findViewById(R.id.recyclerView);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        //绑定控件
-        temperatrueNow = view.findViewById(R.id.temperature_textView);
-        locationNow = view.findViewById(R.id.location_textView);
-        skyConNow = view.findViewById(R.id.skyCon_textView);
-        skyIcon = view.findViewById(R.id.skyCon_frag);
-        mConstraintLayout = view.findViewById(R.id.constraintLayout);
+
+
+
+        if (MainActivity.isPhone){
+            //绑定控件
+            temperatrueNow = view.findViewById(R.id.temperature_textView);
+            locationNow = view.findViewById(R.id.location_textView);
+            skyConNow = view.findViewById(R.id.skyCon_textView);
+            skyIcon = view.findViewById(R.id.skyCon_frag);
+            mConstraintLayout = view.findViewById(R.id.constraintLayout);
+        }
 
         setTitleBar();
 

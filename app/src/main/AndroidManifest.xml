@@ -66,12 +66,18 @@
 
         <activity android:name=".map">
         </activity>
-        <activity android:name=".forecastMsg">
-        </activity>
+        <!--<activity android:name=".forecastMsg">-->
+        <!--</activity>-->
         <activity android:name=".setting">
         </activity>
         <activity android:name=".searchCity">
         </activity>
+
+        <service
+                android:name=".NotificationService"
+                android:enabled="true"
+                android:exported="true">
+        </service>
     </application>
 
 </manifest>

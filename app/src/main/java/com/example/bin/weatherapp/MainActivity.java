@@ -1,8 +1,14 @@
 package com.example.bin.weatherapp;
 
+import android.app.*;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.NotificationCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,6 +26,7 @@ import com.ant.liao.GifView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     public AMapLocationListener mAMapLocationListener;
     public AMapLocationClientOption mAMapLocationClientOption;
     private static final String TAG = "MainActivity";
+
+    public static boolean isPhone = true;
+
+
 
     public static List<String> tags;
 
@@ -108,15 +119,12 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()){
             case R.id.map:
-                //startActivity(new Intent(MainActivity.this, map.class));
-                Fragment fragment = new map();
-                tags.add("mapTag");
-                getSupportFragmentManager().beginTransaction()
-                        .addToBackStack(null)
-                        .add(R.id.fragment_container,fragment,"mapTag").commit();
+                //点击地图后跳转到地图对应的fragment
+                Intent intentMap = new Intent(this,map.class);
+                startActivity(intentMap);
                 return true;
             case R.id.setting:{
-                Toast.makeText(this,"点击了setting",Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this,"点击了setting",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(MainActivity.this,setting.class);
                 intent.putExtra("city",cityNow);
                 intent.putExtra("isCelsius",isCelsius);
@@ -128,7 +136,6 @@ public class MainActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.share_detail:
-                //todo
                 shareWeather();
                 return true;
             default:
@@ -143,8 +150,8 @@ public class MainActivity extends AppCompatActivity {
             Log.i(TAG, "onActivityResult: return MainActivity");
             Log.i(TAG, "onActivityResult: isCelsius = "+data.getBooleanExtra("isCelsius",false));
 
-            if (isCelsius!=data.getBooleanExtra("isCelsius",false)){
-                isCelsius = data.getBooleanExtra("isCelsius",false);
+            if (isCelsius!=data.getBooleanExtra("isCelsius",true)){
+                isCelsius = data.getBooleanExtra("isCelsius",true);
                 if (!isCelsius){
                     weatherListFragment.tempUnit = "°F";
                 }
@@ -155,7 +162,20 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isNoteOn!=data.getBooleanExtra("isNoteOn",false)){
                 isNoteOn = data.getBooleanExtra("isNoteOn",false);
+
+                Log.i(TAG, "onActivityResult: detected isNoteOn changed");
+                Log.i(TAG, "onActivityResult: lastest isNoteOn is "+isNoteOn);
                 weatherListFragment.noteChanged = true;
+                Intent intent = new Intent(this,NotificationService.class);
+                startService(intent);
+//                Intent intent = new Intent(this,AlarmReceiver.class);
+//                intent.setAction("notification");
+//                PendingIntent pendingIntent = PendingIntent.getBroadcast( this,0,intent,0);
+//                AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
+//                int type = AlarmManager.RTC_WAKEUP;
+//                long triggerAtMillis = new Date().getTime();
+//                long intervalMillis = 1000 * 61;
+//                alarmManager.setRepeating(type, triggerAtMillis, intervalMillis, pendingIntent);
             }
 
             String json = data.getStringExtra("city");
@@ -198,6 +218,10 @@ public class MainActivity extends AppCompatActivity {
                     .add(R.id.fragment_container,fragment,"listTag")
                     .commit();
         }
+
+        //判断是手机还是平板
+        isPhone = (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) < Configuration.SCREENLAYOUT_SIZE_LARGE;
+        Log.i(TAG, "onCreate: isPhone is "+isPhone);
     }
 
     @Override

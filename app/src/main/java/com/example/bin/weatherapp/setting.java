@@ -134,6 +134,7 @@ public class setting extends AppCompatActivity {
             mIntent.putExtra("city",new Gson().toJson(selectedCity));
         }
         mIntent.putExtra("isCelsius",isCelsius);
+        Log.i(TAG, "finish: isNoteOn here is "+isNoteOn);
         mIntent.putExtra("isNoteOn",isNoteOn);
         setResult(1,mIntent);
         super.finish();
