@@ -8,8 +8,8 @@
 >
 
     <android.support.v7.widget.RecyclerView
-            android:layout_width="410dp"
-            android:layout_height="697dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
             android:scrollbars="horizontal" android:id="@+id/recyclerView"
             app:layout_constraintStart_toStartOf="parent"

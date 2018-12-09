@@ -25,9 +25,11 @@ import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static android.content.Context.ALARM_SERVICE;
 import static com.example.bin.weatherapp.weatherSpider.getForecastWeather;
 import static com.example.bin.weatherapp.weatherSpider.getRealTimeWeather;
 
@@ -48,7 +50,7 @@ public class weatherListFragment extends Fragment{
     private TextView skyConNow;
     private TextView skyIcon;
     private ConstraintLayout mConstraintLayout;
-    private weatherForecast.Daily_forecast mToday;
+    public static weatherForecast.Daily_forecast mToday = null;
     private Handler mHandler;
     private String tempToday;
     public static boolean needUpdate = false;
@@ -99,13 +101,14 @@ public class weatherListFragment extends Fragment{
 //                        alarmManager.setInexactRepeating(type, triggerAtMillis, intervalMillis, pendingIntent);
 //                        Log.i(TAG, "run: in thread ");
                         Context context = getActivity();
+
                         //创建一个通知管理器
 //                        NotificationManager notificationManager= (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
 //                        if (Build.VERSION.SDK_INT>=26){
-//                            //API26以上必须自定义NotificationChannel
-//                            notificationManager.createNotificationChannel(genChannel(NOTIFICATION_CHANNEL));
-//
-//                        }
+////                            //API26以上必须自定义NotificationChannel
+////                            notificationManager.createNotificationChannel(genChannel(NOTIFICATION_CHANNEL));
+////
+////                        }
 //                        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,NOTIFICATION_CHANNEL);
 //                        builder .setTicker("天气预报")
 //                                .setSmallIcon(R.drawable.title_bar_icon)
@@ -135,13 +138,12 @@ public class weatherListFragment extends Fragment{
         //点击分享后的内容
         return String.format("位置:%s\n" +
                             "经纬度:%s\n" +
-                            "温度:%s"+tempUnit+"\n" +
+                            "温度:%s"+tempUnit+"~%s"+tempUnit+"\n" +
                             "天气状况:%s\n" +
-                            "体感温度:%s\n" +
                             "相对湿度:%s\n" +
                             "能见度:%s km\n" +
-                            "大气压强:%s kpa",sLocation,location,mWeatherRealTime.getTmp(),mWeatherRealTime.getCond_txt(),
-                                            mWeatherRealTime.getFl(),mWeatherRealTime.getHum(),mWeatherRealTime.getVis(),mWeatherRealTime.getPres()
+                            "大气压强:%s kpa",sLocation,location,mToday.getTmp_min(),mToday.getTmp_max(),
+                                            mToday.getCond_txt_d(),mToday.getHum(),mToday.getVis(),mToday.getPres()
         );
     }
 
@@ -202,8 +204,8 @@ public class weatherListFragment extends Fragment{
         protected void onPostExecute(List<weatherForecast.Daily_forecast> daily_forecasts) {
             //将获得的数据绑定到mData中
             mDatas = daily_forecasts;
+            mToday = mDatas.get(0);//获取当天的预测值
             if(MainActivity.isPhone){
-                mToday = mDatas.get(0);//获取当天的预测值
                 mDatas.remove(0);//去掉当天的天气
             }
 
@@ -264,9 +266,6 @@ public class weatherListFragment extends Fragment{
         actionBar.setHomeButtonEnabled(false);
         actionBar.setDisplayHomeAsUpEnabled(false);
 
-//        actionBar.getCustomView().findViewById(android.R.id.home).setVisibility(View.INVISIBLE);
-//        actionBar.getCustomView().findViewById(R.id.share_detail).setVisibility(View.INVISIBLE);
-
     }
 
 
@@ -298,7 +297,9 @@ public class weatherListFragment extends Fragment{
 
                 if (msg.what==1){
                     mAdapter.notifyDataSetChanged();
-                    temperatrueNow.setText(celsiusToFahrenheit(tempToday)+tempUnit);
+                    if (MainActivity.isPhone){
+                        temperatrueNow.setText(celsiusToFahrenheit(tempToday)+tempUnit);
+                    }
                 }
             }
         };

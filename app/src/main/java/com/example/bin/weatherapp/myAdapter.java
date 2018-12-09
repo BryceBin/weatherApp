@@ -63,12 +63,27 @@ public class myAdapter extends RecyclerView.Adapter<myViewHolder>{
         holder.condPic.setBackgroundResource(getResId(daily_forecast.getCond_code_d()));
         holder.skyCon.setText(daily_forecast.getCond_txt_d());
 
-        if (position==0){
-            holder.date.setText(R.string.tomorrow);
+        if (MainActivity.isPhone){
+            if (position==0){
+                holder.date.setText(R.string.tomorrow);
+            }
+            else{
+                holder.date.setText(forecastMsg.getWeekDay(daily_forecast.getDate()));
+            }
         }
         else{
-            holder.date.setText(forecastMsg.getWeekDay(daily_forecast.getDate()));
+            if (position==0){
+                holder.date.setText("今天");
+            }
+            else if (position==1){
+                holder.date.setText(R.string.tomorrow);
+            }
+            else{
+                holder.date.setText(forecastMsg.getWeekDay(daily_forecast.getDate()));
+            }
         }
+
+
 
         holder.tmpMax.setText(weatherListFragment.celsiusToFahrenheit(daily_forecast.getTmp_max())+weatherListFragment.tempUnit);
         holder.tmpMin.setText(weatherListFragment.celsiusToFahrenheit(daily_forecast.getTmp_min())+weatherListFragment.tempUnit);

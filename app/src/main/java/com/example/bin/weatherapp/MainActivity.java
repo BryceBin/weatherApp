@@ -26,6 +26,7 @@ import com.ant.liao.GifView;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -162,20 +163,19 @@ public class MainActivity extends AppCompatActivity {
             }
             if (isNoteOn!=data.getBooleanExtra("isNoteOn",false)){
                 isNoteOn = data.getBooleanExtra("isNoteOn",false);
-
-                Log.i(TAG, "onActivityResult: detected isNoteOn changed");
-                Log.i(TAG, "onActivityResult: lastest isNoteOn is "+isNoteOn);
                 weatherListFragment.noteChanged = true;
-                Intent intent = new Intent(this,NotificationService.class);
-                startService(intent);
-//                Intent intent = new Intent(this,AlarmReceiver.class);
-//                intent.setAction("notification");
-//                PendingIntent pendingIntent = PendingIntent.getBroadcast( this,0,intent,0);
-//                AlarmManager alarmManager = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-//                int type = AlarmManager.RTC_WAKEUP;
-//                long triggerAtMillis = new Date().getTime();
-//                long intervalMillis = 1000 * 61;
-//                alarmManager.setRepeating(type, triggerAtMillis, intervalMillis, pendingIntent);
+                //注册
+                Intent intent = new Intent(this, AlarmReceiver.class);
+                PendingIntent sender = PendingIntent.getBroadcast(this, 0, intent, 0);
+                // 过10s 执行
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTimeInMillis(System.currentTimeMillis());
+                calendar.add(Calendar.SECOND, 0);
+
+                AlarmManager manager = (AlarmManager)getSystemService(ALARM_SERVICE);
+                manager.set(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), sender);
+                Log.i(TAG, "onActivityResult: sent here");
+
             }
 
             String json = data.getStringExtra("city");
@@ -187,7 +187,6 @@ public class MainActivity extends AppCompatActivity {
                 weatherListFragment.sLocation = cityNow;
                 weatherListFragment.location = sCity.getLon()+","+sCity.getLat();
                 weatherListFragment.needUpdate=true;
-
             }
 
         }

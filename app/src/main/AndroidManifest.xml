@@ -76,8 +76,11 @@
         <service
                 android:name=".NotificationService"
                 android:enabled="true"
-                android:exported="true">
+                android:exported="true"
+                android:process="system"
+        >
         </service>
+        <receiver android:name="com.example.bin.weatherapp.AlarmReceiver" android:process=":remote"></receiver>
     </application>
 
 </manifest>

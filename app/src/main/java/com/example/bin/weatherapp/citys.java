@@ -16,9 +16,6 @@ public class citys {
         return city;
     }
 
-    /**
-     * Copyright 2018 bejson.com
-     */
     class City {
 
         private String cid;
