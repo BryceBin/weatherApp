@@ -46,7 +46,6 @@ public class setting extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.i(TAG, "onClick: click location");
-                //todo
                 Intent intent = new Intent(setting.this,searchCity.class);
                 startActivityForResult(intent,2);
             }

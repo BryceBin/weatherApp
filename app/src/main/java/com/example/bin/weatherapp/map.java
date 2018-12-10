@@ -23,17 +23,27 @@ public class map extends AppCompatActivity {
     private UiSettings mUiSettings;
 
     public void setTitleBar(){
-        ActionBar actionBar = MainActivity.sActionBar;
+        ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle(R.string.map);
         actionBar.setHomeButtonEnabled(true);
         actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish(); // back button
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_map);
-        //setTitleBar();
+        setTitleBar();
 
 
 
